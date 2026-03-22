@@ -43,7 +43,23 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-
 /* ── TOP ── */
 .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem;flex-wrap:wrap;gap:1.25rem}
 .brand{display:flex;align-items:center;gap:16px}
-.logo-wrap{position:relative;width:56px;height:56px;flex-shrink:0}
+.logo-wrap{
+  position:relative;width:62px;height:62px;flex-shrink:0;border-radius:16px;
+  box-shadow:
+    0 0 0 1px rgba(200,230,74,.14),
+    0 4px 20px rgba(0,0,0,.5),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  transition:transform .28s ease,box-shadow .28s ease;
+}
+.brand:hover .logo-wrap{
+  transform:translateY(-2px);
+  box-shadow:
+    0 0 0 1px rgba(200,230,74,.28),
+    0 10px 32px rgba(0,0,0,.55),
+    0 0 36px rgba(200,230,74,.12),
+    inset 0 1px 0 rgba(255,255,255,.08);
+}
+.logo-wrap svg{display:block;width:100%;height:100%;border-radius:15px}
 .brand-text-main{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.3px;line-height:1;color:var(--ink)}
 .brand-text-sub{font-size:11px;color:var(--ink3);margin-top:4px;letter-spacing:.04em;text-transform:uppercase;font-weight:500}
 .kpis{display:flex;gap:8px}
@@ -236,7 +252,7 @@ select option{background:var(--card2)}
 .cr-act.activ-act:hover{border-color:rgba(200,230,74,.4);color:var(--lime);background:var(--lime-bg)}
 .cr-act.danger-act:hover{border-color:rgba(232,91,58,.4);color:var(--red);background:var(--red-bg)}
 
-/* ── PDF PROPUESTA ── */
+/* ── FAB ── */
 .fab-group{position:fixed;bottom:1.75rem;right:1.75rem;z-index:150;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 .fab-toggle{width:52px;height:52px;border-radius:50%;background:var(--lime);color:#0f0e0a;border:none;cursor:pointer;
   font-size:24px;font-weight:400;line-height:1;box-shadow:0 4px 20px rgba(200,230,74,.4),0 2px 8px rgba(0,0,0,.5);
@@ -258,24 +274,11 @@ select option{background:var(--card2)}
   box-shadow:0 3px 12px rgba(0,0,0,.4);transition:all .15s}
 .fab-btn:hover{transform:scale(1.1)}
 .fab-btn:active{transform:scale(.95)}
-.fab-pdf{background:#2a2a20;color:var(--lime);border:1.5px solid rgba(200,230,74,.3)}
-.fab-pdf:hover{background:var(--lime-bg)}
 .fab-green{background:var(--green);color:#fff}
 .fab-green:hover{background:#1a7a42;box-shadow:0 4px 16px rgba(23,99,52,.5)}
 .fab-red{background:var(--red-dim);color:#fff}
 .fab-red:hover{background:var(--red);box-shadow:0 4px 16px rgba(176,62,35,.5)}
-.pdf-mo .moc{max-width:680px;max-height:90vh;overflow-y:auto}
-.pdf-section-title{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.1em;margin:1.25rem 0 .75rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
-.pdf-section-title:first-child{margin-top:0}
-.pdf-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.pdf-grid.three{grid-template-columns:1fr 1fr 1fr}
-.pdf-auto{background:var(--card2);border:1px dashed var(--border2);border-radius:var(--r);padding:10px 13px;font-size:13px;color:var(--ink3)}
-.pdf-auto span{color:var(--lime);font-weight:700}
-.pdf-btn-gen{width:100%;padding:13px;border-radius:var(--r);background:var(--lime);color:#0f0e0a;border:none;cursor:pointer;
-  font-family:'Syne',sans-serif;font-size:15px;font-weight:800;letter-spacing:.02em;margin-top:1.25rem;transition:all .15s}
-.pdf-btn-gen:hover{background:#d4f050}
-.pdf-btn-gen:disabled{opacity:.5;cursor:not-allowed}
-@media(max-width:600px){.pdf-grid,.pdf-grid.three{grid-template-columns:1fr}.fab span{display:none}.fab{padding:14px}}
+@media(max-width:600px){.fab span{display:none}.fab{padding:14px}}
 @media(max-width:600px){.fg{grid-template-columns:1fr}.kpis{flex-wrap:wrap}.top{flex-direction:column}.detail-grid{grid-template-columns:1fr}.dstat-row{flex-wrap:wrap}}
 </style>
 </head>
@@ -285,33 +288,45 @@ select option{background:var(--card2)}
   <!-- HEADER -->
   <div class="top">
     <div class="brand">
-      <!-- LOGO: shield with magnifying glass / detection theme -->
-      <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+      <div class="logo-wrap" aria-hidden="true">
+      <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#c8e64a"/>
-            <stop offset="100%" stop-color="#8fa832"/>
+          <linearGradient id="lg-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#2a2820"/>
+            <stop offset="55%" stop-color="#1a1912"/>
+            <stop offset="100%" stop-color="#12110c"/>
           </linearGradient>
-          <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#242318"/>
-            <stop offset="100%" stop-color="#181710"/>
+          <linearGradient id="lg-lime" x1="18%" y1="12%" x2="82%" y2="88%">
+            <stop offset="0%" stop-color="#e8f56e"/>
+            <stop offset="45%" stop-color="#c8e64a"/>
+            <stop offset="100%" stop-color="#7a9228"/>
+          </linearGradient>
+          <linearGradient id="lg-shield-fill" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stop-color="#c8e64a" stop-opacity=".22"/>
+            <stop offset="100%" stop-color="#8fa832" stop-opacity=".06"/>
+          </linearGradient>
+          <linearGradient id="lg-rim" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="rgba(255,255,255,.14)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,.02)"/>
           </linearGradient>
         </defs>
-        <!-- Outer rounded square bg -->
-        <rect width="56" height="56" rx="14" fill="url(#bgGrad)"/>
-        <rect width="56" height="56" rx="14" fill="none" stroke="rgba(200,230,74,.25)" stroke-width="1"/>
-        <!-- Shield filled -->
-        <path d="M28 8 L42 14 L42 27 C42 36 35.5 43 28 46 C20.5 43 14 36 14 27 L14 14 Z" fill="url(#shieldGrad)" opacity=".15"/>
-        <!-- Shield outline -->
-        <path d="M28 8 L42 14 L42 27 C42 36 35.5 43 28 46 C20.5 43 14 36 14 27 L14 14 Z" fill="none" stroke="url(#shieldGrad)" stroke-width="2" stroke-linejoin="round"/>
-        <!-- Magnifying glass circle -->
-        <circle cx="26" cy="26" r="7" fill="none" stroke="#c8e64a" stroke-width="2.2"/>
-        <!-- Magnifying glass handle -->
-        <line x1="31" y1="31" x2="37" y2="37" stroke="#c8e64a" stroke-width="2.5" stroke-linecap="round"/>
-        <!-- Small exclamation inside lens -->
-        <rect x="25.3" y="22" width="1.4" height="5" rx=".7" fill="#c8e64a"/>
-        <circle cx="26" cy="29" r=".8" fill="#c8e64a"/>
+        <rect width="60" height="60" rx="15" fill="url(#lg-bg)"/>
+        <rect width="60" height="60" rx="15" fill="none" stroke="url(#lg-lime)" stroke-width="1.15" opacity=".35"/>
+        <rect x="1" y="1" width="58" height="58" rx="14" fill="none" stroke="url(#lg-rim)" stroke-width="1"/>
+        <!-- Shield -->
+        <path d="M30 9 L45.5 15.2 V29.2 C45.5 38.8 38.6 47.2 30 50.2 C21.4 47.2 14.5 38.8 14.5 29.2 V15.2 Z" fill="url(#lg-shield-fill)"/>
+        <path d="M30 9 L45.5 15.2 V29.2 C45.5 38.8 38.6 47.2 30 50.2 C21.4 47.2 14.5 38.8 14.5 29.2 V15.2 Z" fill="none" stroke="url(#lg-lime)" stroke-width="1.85" stroke-linejoin="round" stroke-linecap="round"/>
+        <!-- Lens -->
+        <circle cx="27.5" cy="27.2" r="8.2" fill="rgba(0,0,0,.2)" stroke="none"/>
+        <circle cx="27.5" cy="27.2" r="8.2" fill="none" stroke="rgba(200,230,74,.15)" stroke-width="3"/>
+        <circle cx="27.5" cy="27.2" r="8.2" fill="none" stroke="url(#lg-lime)" stroke-width="1.6"/>
+        <line x1="33.2" y1="33" x2="40.5" y2="40.2" stroke="url(#lg-lime)" stroke-width="3" stroke-linecap="round"/>
+        <line x1="33.2" y1="33" x2="40.5" y2="40.2" stroke="rgba(255,255,255,.2)" stroke-width="1" stroke-linecap="round" opacity=".6"/>
+        <!-- Alert mark -->
+        <line x1="27.5" y1="21.8" x2="27.5" y2="26.4" stroke="url(#lg-lime)" stroke-width="1.35" stroke-linecap="round"/>
+        <circle cx="27.5" cy="29.35" r="1.1" fill="url(#lg-lime)"/>
       </svg>
+      </div>
       <div>
         <div class="brand-text-main">¡Que No Te La Cuelen!</div>
         <div class="brand-text-sub" id="fecha-hoy">Cargando...</div>
@@ -376,10 +391,6 @@ select option{background:var(--card2)}
   <!-- Action buttons — revealed on toggle -->
   <div class="fab-actions" id="fab-actions">
     <div class="fab-item">
-      <span class="fab-label">Generar propuesta PDF</span>
-      <button class="fab-btn fab-pdf" onclick="toggleFabs();openMo('mo-pdf')" title="Generar PDF">📄</button>
-    </div>
-    <div class="fab-item">
       <span class="fab-label">Contrato enviado</span>
       <button class="fab-btn fab-green" onclick="toggleFabs();openMo('mo-enviado')" title="Contrato enviado">📨</button>
     </div>
@@ -408,7 +419,6 @@ select option{background:var(--card2)}
       </div>
       <div style="display:flex;gap:8px;align-items:center">
         <button class="edit-btn" onclick="openEditFromDetail()">Editar</button>
-        <button class="edit-btn" style="color:var(--lime);border-color:rgba(200,230,74,.3)" onclick="abrirPdfDesdeDetalle()">PDF</button>
         <button class="edit-btn" style="color:var(--red);border-color:rgba(232,91,58,.3)" onclick="eliminarCliente()">Eliminar</button>
         <button class="mo-x" onclick="closeMo('mo-detail')">✕</button>
       </div>
@@ -773,8 +783,6 @@ function openDetail(id){
   }).join('');
   openMo('mo-detail');
 }
-function abrirPdfDesdeDetalle(){const c=clientes.find(x=>x.id===detailId);if(c){document.getElementById("pdf-nombre").value=c.nom||"";document.getElementById("pdf-tel").value=c.tel||"";}closeMo("mo-detail");openMo("mo-pdf");}
-
 function openEditFromDetail(){closeMo('mo-detail');if(detailId) setTimeout(()=>openEdit(detailId),150);}
 
 function quickFirma(){
@@ -952,280 +960,10 @@ function resetBaja(){bajaId=null;const bf=document.getElementById('bform');if(bf
 
 function openMo(id){document.getElementById(id).classList.add('open');document.body.style.overflow='hidden';}
 function closeMo(id){document.getElementById(id).classList.remove('open');document.body.style.overflow='';}
-['mo-detail','mo-edit','mo-pdf','mo-enviado','mo-firmado','mo-activado','mo-baja'].forEach(id=>{
+['mo-detail','mo-edit','mo-enviado','mo-firmado','mo-activado','mo-baja'].forEach(id=>{
   const el=document.getElementById(id);
   if(el) el.addEventListener('click',function(e){if(e.target===this)closeMo(id);});
 });
-
-// ── PDF PROPUESTA ────────────────────────────────────────────────
-function openPdfForCliente(id){
-  const c=clientes.find(x=>x.id===id);
-  if(c){document.getElementById('pdf-nombre').value=c.nom||'';document.getElementById('pdf-tel').value=c.tel||'';}
-  openMo('mo-pdf');
-}
-
-function generarPropuesta(){
-  const nombre = document.getElementById('pdf-nombre').value.trim();
-  const dni    = document.getElementById('pdf-dni').value.trim().toUpperCase();
-  const tel    = document.getElementById('pdf-tel').value.trim();
-  const comer  = document.getElementById('pdf-comer').value.trim();
-  const fact   = parseFloat(document.getElementById('pdf-fact').value) || 0;
-  const gana   = parseFloat(document.getElementById('pdf-gana').value) || 0;
-
-  if(!nombre) { alert('Introduce el nombre del cliente.'); return; }
-  if(!dni)    { alert('El DNI del titular es obligatorio.'); return; }
-  if(!tel)    { alert('Introduce el teléfono del cliente.'); return; }
-  if(!comer)  { alert('Introduce la comercializadora actual.'); return; }
-  if(!fact)   { alert('Introduce el total de la factura actual.'); return; }
-  if(!gana)   { alert('Introduce el total con Gana Energía.'); return; }
-
-  const mes = +(fact - gana).toFixed(2);
-  const d = {
-    nombre, dni, tel, comer,
-    tarifa:'2.0TD', dias:30, p1:0, p2:0,
-    e_punta:0, e_llano:0, e_valle:0,
-    fact, gana,
-    gana_tar:'Tarifa Precio de Mercado',
-    mes, m6:+(mes*6).toFixed(2), a1:+(mes*12).toFixed(2),
-  };
-
-  const btn = document.getElementById('pdf-gen-btn');
-  btn.disabled = true; btn.textContent = 'Generando...';
-  const gen = () => { try { buildPDF(d); } finally { btn.disabled = false; btn.textContent = '📄 Descargar PDF'; } };
-  if(!window.jspdf){
-    const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-    s.onload = gen;
-    s.onerror = () => { alert('Error cargando jsPDF. Comprueba tu conexión.'); btn.disabled=false; btn.textContent='📄 Descargar PDF'; };
-    document.body.appendChild(s);
-  } else gen();
-}
-
-function buildPDF(d){
-  const{jsPDF}=window.jspdf;
-  const doc=new jsPDF({orientation:'p',unit:'mm',format:'a4'});
-  const W=210,H=297,M=15,CW=180;
-
-  // ── Helpers ──────────────────────────────────────────────────
-  const E=v=>(parseFloat(v)||0).toFixed(2)+' €';
-  const pct=d.fact>0?Math.round(d.mes/d.fact*100):0;
-  const n0=(d.nombre||'').split(' ')[0]||'cliente';
-  const COMER=(d.comer||'').toUpperCase()||'tu compañía actual';
-
-  // ── Palette ──────────────────────────────────────────────────
-  const ink=[15,15,20];
-  const ink2=[80,80,95];
-  const ink3=[150,150,165];
-  const white=[255,255,255];
-  const bg=[248,248,252];
-  const navy=[8,24,58];
-  const navyL=[18,44,88];
-  const lime=[186,230,50];
-  const limeD=[120,160,20];
-  const limeLL=[240,250,210];
-  const red=[210,35,45];
-  const redL=[253,235,236];
-  const gold=[230,155,20];
-  const goldL=[255,248,225];
-  const teal=[15,150,130];
-  const tealL=[220,248,244];
-  const border=[220,220,230];
-
-  // ── Drawing helpers ──────────────────────────────────────────
-  const F=(x,y,w,h,c,r=0)=>{doc.setFillColor(...c);r?doc.roundedRect(x,y,w,h,r,r,'F'):doc.rect(x,y,w,h,'F');};
-  const T=(s,x,y,sz,c,bold=false,align='left',mw=0)=>{
-    doc.setFontSize(sz);doc.setTextColor(...c);
-    doc.setFont('helvetica',bold?'bold':'normal');
-    const o={align};if(mw)o.maxWidth=mw;
-    doc.text(String(s||''),x,y,o);
-  };
-  const LINE=(x1,y1,x2,y2,c,lw=0.3)=>{doc.setDrawColor(...c);doc.setLineWidth(lw);doc.line(x1,y1,x2,y2);};
-  const RECT=(x,y,w,h,c,lw=0.5)=>{doc.setDrawColor(...c);doc.setLineWidth(lw);doc.rect(x,y,w,h,'S');};
-
-  let y=0;
-
-  // ══════════════════════════════════════════════════════════════
-  // HEADER — clean dark band
-  // ══════════════════════════════════════════════════════════════
-  F(0,0,W,22,navy);
-  // Lime accent bar
-  F(0,22,W,2.5,lime);
-  // Logo text
-  T('QUE NO TE LA CUELEN',M,9,11,lime,true);
-  T('Analisis de Ahorro en tu Factura de Luz',M,15.5,7,white);
-  // Client name right side
-  T(d.nombre||'',W-M,8,10,white,true,'right');
-  if(d.dni) T('DNI: '+d.dni,W-M,14,7.5,lime,true,'right');
-  T((d.tel?d.tel+' · ':'')+'Informe personalizado y confidencial',W-M,19,6.5,[180,200,230],false,'right');
-  y=33;
-
-  // ══════════════════════════════════════════════════════════════
-  // HOOK — personalized opening
-  // ══════════════════════════════════════════════════════════════
-  T('Hola, '+n0+'. Tenemos buenas noticias.',M,y,18,navy,true);y+=7;
-  const intro='Hemos revisado las condiciones de tu contrato actual con '+COMER+' y las hemos comparado con todas las ofertas disponibles en el mercado ahora mismo. El resultado es claro:';
-  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(...ink2);
-  const introLines=doc.splitTextToSize(intro,CW);
-  doc.text(introLines,M,y);
-  y+=introLines.length*5+4;
-
-  // Big impact number — how much they're overpaying
-  F(M,y,CW,24,navy,3);
-  // Diagonal accent
-  F(M,y,6,24,lime);
-  F(M+6,y,2,24,[limeD[0],limeD[1],limeD[2]]);
-  T('Pagas '+E(d.fact)+'/mes',M+13,y+9,13,white,true);
-  T('cuando podrias pagar '+E(d.gana)+'/mes',M+13,y+17,9,[180,200,230]);
-  T(pct+'% de sobreprecio',W-M-4,y+13,18,lime,true,'right');
-  y+=30;
-
-  // ══════════════════════════════════════════════════════════════
-  // COMPARISON TABLE — clean, modern
-  // ══════════════════════════════════════════════════════════════
-  y+=2;
-  // Section title
-  doc.setFillColor(...lime);doc.rect(M,y,3,8,'F');
-  T('COMPARATIVA DE TARIFAS',M+6,y+6,8,navy,true);
-  y+=13;
-
-  const c1=CW*0.40,c2=CW*0.30,c3w=CW*0.30;
-  // Header row
-  F(M,y,CW,8,navy);
-  T('CONCEPTO',M+4,y+5.5,7,white,true);
-  T(COMER,M+c1+c2/2,y+5.5,7,gold,true,'center');
-  T('MEJOR TARIFA ENCONTRADA',M+c1+c2+c3w/2,y+5.5,7,lime,true,'center');
-  y+=8;
-
-  const rows=[
-    ['Coste mensual',E(d.fact),E(d.gana),'cost'],
-    ['Lo que ahorrarías por mes','-','- '+E(d.mes),'save'],
-    ['Lo que ahorrarías por año','-','- '+E(d.a1),'save'],
-  ];
-  rows.forEach((row,i)=>{
-    const rowBg=i%2===0?white:[245,245,250];
-    F(M,y,CW,8,rowBg);
-    LINE(M,y+8,M+CW,y+8,border,0.2);
-    T(row[0],M+4,y+5.5,8,ink,true);
-    // Current company col — red if it's worse
-    const isWorse=row[3]==='save'||row[3]==='free';
-    T(row[1],M+c1+c2/2,y+5.5,8,isWorse?red:ink2,isWorse,'center');
-    // Gana col — always green
-    T(row[2],M+c1+c2+c3w/2,y+5.5,8,row[3]==='cost'?teal:teal,true,'center');
-    y+=8;
-  });
-  // Bottom border
-  LINE(M,y,M+CW,y,border,0.5);
-  y+=8;
-
-  // ══════════════════════════════════════════════════════════════
-  // WINNING TARIFF — premium box
-  // ══════════════════════════════════════════════════════════════
-  doc.setFillColor(...lime);doc.rect(M,y,3,8,'F');
-  T('LA MEJOR TARIFA QUE HEMOS ENCONTRADO PARA TI',M+6,y+6,8,navy,true);
-  y+=13;
-
-  F(M,y,CW,30,navy,2);
-  // Top accent line
-  F(M,y,CW,1.5,lime);
-  // Content
-  T('GANA ENERGIA',W/2,y+9,7,[150,180,255],true,'center');
-  T(d.gana_tar||'Tarifa Precio de Mercado',W/2,y+17,14,white,true,'center');
-  // Three pills
-  const pills=['Sin permanencia','Cambio 100% gratuito','Empiezas a ahorrar ya'];
-  const pw=50,pgap=(CW-pw*3)/4;
-  pills.forEach((p,i)=>{
-    const px=M+pgap+(pw+pgap)*i;
-    F(px,y+21,pw,7,navyL,1);
-    RECT(px,y+21,pw,7,lime,0.4);
-    T(p,px+pw/2,y+26,7,lime,true,'center');
-  });
-  y+=36;
-
-  // ══════════════════════════════════════════════════════════════
-  // TRANSITION + BONUS — unified persuasion block
-  // ══════════════════════════════════════════════════════════════
-  y+=4;
-
-  // ── CTA SECTION — unified persuasion block ──────────────────
-  y+=4;
-
-  // Big CTA header
-  F(M,y,CW,14,navy,2);
-  F(M,y,CW,2,lime);
-  T('Quieres pasarte a la mejor tarifa que hemos encontrado?',W/2,y+9.5,9.5,white,true,'center');
-  y+=18;
-
-  // Narrative
-  const narr1='La mejor tarifa que hemos encontrado para ti es la '+(d.gana_tar||'Tarifa Precio de Mercado')+' de Gana Energia, con la que ahorrarías '+E(d.mes)+' al mes y '+E(d.a1)+' al año. Si quieres cambiarte a esta tarifa, nosotros nos encargamos de gestionar el cambio de manera completamente gratuita.';
-  doc.setFontSize(9.5);doc.setFont('helvetica','normal');doc.setTextColor(...ink);
-  const nLines1=doc.splitTextToSize(narr1,CW);
-  doc.text(nLines1,M,y);
-  y+=nLines1.length*5.2+4;
-
-  const narr2='Solo mandanos un WhatsApp diciéndonos que quieres cambiarte a la mejor tarifa que hemos encontrado, y nosotros gestionamos el cambio de manera 100% gratuita y sin que tu tengas que avisar a '+COMER+' ni nada. Ademas, si haces el cambio antes del 1 de mayo de 2026, te regalamos un bono de fidelidad de 60 euros (15 euros llegaran directamente a tu cuenta bancaria cada 3 meses que mantengas el contrato activo).';
-  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(...ink2);
-  const nLines2=doc.splitTextToSize(narr2,CW);
-  doc.text(nLines2,M,y);
-  y+=nLines2.length*5+8;
-
-  // Three trust cards — all identical style
-  const trustItems=[
-    ['Cambio gratuito','Lo gestionamos nosotros. Tu no tienes que hacer nada.'],
-    ['Sin cortes de luz','Ni un segundo sin suministro. Es solo un cambio administrativo.'],
-    ['Sin permanencia','Libre siempre. Sin compromisos ni letra pequena.'],
-  ];
-  const tiw=(CW-8)/3;
-  trustItems.forEach((ti,i)=>{
-    const tx=M+i*(tiw+4);
-    // All cards: navy background, lime top bar
-    F(tx,y,tiw,24,navy,2);
-    F(tx,y,tiw,2,lime);
-    // Icon dots for visual interest
-    doc.setFillColor(...lime);
-    doc.circle(tx+tiw/2,y+9,2,'F');
-    T(ti[0],tx+tiw/2,y+15,7.5,lime,true,'center');
-    doc.setFontSize(6.5);doc.setFont('helvetica','normal');doc.setTextColor(170,195,230);
-    const tl=doc.splitTextToSize(ti[1],tiw-8);
-    doc.text(tl,tx+tiw/2,y+20,{align:'center',maxWidth:tiw-8});
-  });
-  y+=30;
-
-  // BONUS BOX — elegant gold
-  y+=5;
-  F(M,y,CW,34,navy,2);
-  F(M,y,CW,2,gold);
-  F(M,y+32,CW,2,gold);
-  T('UN REGALO POR CAMBIARTE CON NOSOTROS',W/2,y+8,8,gold,true,'center');
-  LINE(M+30,y+11,M+CW-30,y+11,gold,0.3);
-  T('15 euros directamente en tu cuenta bancaria cada 3 meses.',W/2,y+17,9.5,white,true,'center');
-  T('Son 60 euros en tu primer ano. Ingresados automaticamente, sin tramites,',W/2,y+24,7.5,[180,200,230],false,'center',CW-20);
-  T('sin sorteos y sin condiciones. Solo por tener el contrato activo con Gana Energia.',W/2,y+30,7.5,[160,180,210],false,'center',CW-20);
-  y+=40;
-
-  // ══════════════════════════════════════════════════════════════
-  // CTA — final call to action
-  // ══════════════════════════════════════════════════════════════
-  F(M,y,CW,30,navy,3);
-  F(M,y,CW,1.5,lime);
-  F(M,y+28.5,CW,1.5,lime);
-  T('UN SOLO MENSAJE LO CAMBIA TODO',W/2,y+9,10,white,true,'center');
-  T('Responde a este WhatsApp con "Quiero cambiarte" y nos encargamos de todo.',W/2,y+16,8.5,[190,210,240],false,'center',CW-20);
-  T('Gratis. Sin cortes. Sin tramites. En menos de 48 horas.',W/2,y+23,8,lime,true,'center');
-  y+=36;
-
-  // Closing line
-  T('Cada mes que esperas es '+E(d.mes)+' que no recuperas. Al ano, '+E(d.a1)+'.',W/2,y,8,ink2,false,'center',CW);
-
-  // ══════════════════════════════════════════════════════════════
-  // FOOTER
-  // ══════════════════════════════════════════════════════════════
-  F(0,H-9,W,9,navy);
-  LINE(0,H-9,W,H-9,lime,0.5);
-  T('Que No Te La Cuelen  |  Informe confidencial para uso exclusivo de '+n0,M,H-3.5,5.5,[130,155,200]);
-  T('Pag. 1',W-M,H-3.5,5.5,lime,true,'right');
-
-  doc.save('propuesta_'+((d.nombre||'cliente').replace(/\s+/g,'_'))+'.pdf');
-}
 
 // ── FAB GROUP ────────────────────────────────────────────────────
 function toggleFabs(){
@@ -1330,45 +1068,6 @@ function confirmActivado(){
 updateKPIs();
 renderHoy();
 </script>
-<!-- MODAL PROPUESTA PDF -->
-<div class="mo pdf-mo" id="mo-pdf">
-  <div class="moc">
-    <div class="mo-h">
-      <h2>Generar propuesta PDF</h2>
-      <button class="mo-x" onclick="closeMo('mo-pdf')">✕</button>
-    </div>
-
-    <div class="pdf-section-title">Cliente</div>
-    <div class="fi" style="margin-bottom:.75rem">
-      <label>Nombre del cliente</label>
-      <input id="pdf-nombre" placeholder="Se rellena automáticamente si abres desde una ficha" style="background:var(--card2)"/>
-    </div>
-    <div class="pdf-grid" style="margin-bottom:.75rem">
-      <div class="fi"><label>DNI del titular <em style="color:var(--red)">*</em></label><input id="pdf-dni" placeholder="12345678A"/></div>
-      <div class="fi"><label>Teléfono</label><input id="pdf-tel" type="tel" placeholder="650 000 000" style="background:var(--card2)"/></div>
-    </div>
-
-    <div class="pdf-section-title">Factura actual</div>
-    <div class="pdf-grid" style="margin-bottom:.75rem">
-      <div class="fi"><label>Comercializadora actual <em style="color:var(--red)">*</em></label><input id="pdf-comer" placeholder="Endesa, Iberdrola, Naturgy..."/></div>
-      <div class="fi"><label>Total factura actual (€) <em style="color:var(--red)">*</em></label><input id="pdf-fact" type="number" step="0.01" placeholder="85.00"/></div>
-    </div>
-
-    <div class="pdf-section-title">Mejor tarifa encontrada — Gana Energía</div>
-    <div class="fi" style="margin-bottom:.75rem">
-      <label>Total con Gana Energía (€) <em style="color:var(--red)">*</em></label>
-      <input id="pdf-gana" type="number" step="0.01" placeholder="62.00"/>
-    </div>
-    <div class="pdf-auto" style="margin-top:.25rem">
-      💡 El ahorro se <span>calcula automáticamente</span>: por mes, a 6 meses y al año.
-    </div>
-
-    <button class="pdf-btn-gen" id="pdf-gen-btn" onclick="generarPropuesta()">
-      📄 Descargar PDF
-    </button>
-  </div>
-</div>
-
 <!-- MODAL: CONTRATO ENVIADO (nuevo cliente) -->
 <div class="mo" id="mo-enviado">
   <div class="moc">
