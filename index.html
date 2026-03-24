@@ -567,7 +567,7 @@ async function getPagosHoySupabasePendientes(){
   ].join(',');
   const {data,error}=await supabaseClient
     .from('contratos')
-    .select('id,tipo,fecha_pago_1,fecha_pago_2,fecha_pago_3,fecha_pago_4,pago_1_hecho,pago_2_hecho,pago_3_hecho,pago_4_hecho,clientes(nombre,apellidos,telefono,iban_cargo,iban_bono)')
+    .select('id,tipo,iban_cargo,iban_bono,fecha_pago_1,fecha_pago_2,fecha_pago_3,fecha_pago_4,pago_1_hecho,pago_2_hecho,pago_3_hecho,pago_4_hecho,clientes(nombre,apellidos,telefono)')
     .or(orClause);
   if(error){console.warn('No se pudieron cargar pagos hoy desde Supabase',error);return [];}
   const rows=[];
@@ -576,8 +576,8 @@ async function getPagosHoySupabasePendientes(){
     const c={
       nom:((cli.nombre||'')+' '+(cli.apellidos||'')).trim()||'Sin nombre',
       tel:cli.telefono||'',
-      iban:cli.iban_cargo||'',
-      iban_bono:cli.iban_bono||'',
+      iban:r.iban_cargo||'',
+      iban_bono:r.iban_bono||'',
       tipo:r.tipo||'Luz',
       contrato:String(r.id)
     };
@@ -1257,13 +1257,14 @@ function saveEdit(){
     (async()=>{
       const {error:e1}=await supabaseClient
         .from('clientes')
-        .update({nombre,apellidos,dni:dniE,telefono:tel,iban_cargo:iban})
+        .update({nombre,apellidos,dni:dniE,telefono:tel})
         .eq('id',c.cliente_id);
       if(e1){alert('Error actualizando cliente en Supabase: '+e1.message);return;}
       const {error:e2}=await supabaseClient
         .from('contratos')
         .update({
           tipo:document.getElementById('e-tipo').value,
+          iban_cargo:iban||null,
           fecha_contrato_enviado:envio||null,
           fecha_contrato_firmado:firma||null,
           fecha_activado:activ||null,
