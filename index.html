@@ -555,6 +555,61 @@ function getPagos(dia){
   return r;
 }
 
+const ymdHoy=()=>new Date().toISOString().slice(0,10);
+async function getPagosHoySupabasePendientes(){
+  if(!supabaseClient) return [];
+  const y=ymdHoy();
+  const orClause=[
+    `and(fecha_pago_1.eq.${y},pago_1_hecho.eq.false)`,
+    `and(fecha_pago_2.eq.${y},pago_2_hecho.eq.false)`,
+    `and(fecha_pago_3.eq.${y},pago_3_hecho.eq.false)`,
+    `and(fecha_pago_4.eq.${y},pago_4_hecho.eq.false)`
+  ].join(',');
+  const {data,error}=await supabaseClient
+    .from('contratos')
+    .select('id,tipo,fecha_pago_1,fecha_pago_2,fecha_pago_3,fecha_pago_4,pago_1_hecho,pago_2_hecho,pago_3_hecho,pago_4_hecho,clientes(nombre,apellidos,telefono,iban_cargo,iban_bono)')
+    .or(orClause);
+  if(error){console.warn('No se pudieron cargar pagos hoy desde Supabase',error);return [];}
+  const rows=[];
+  (data||[]).forEach(r=>{
+    const cli=r.clientes||{};
+    const c={
+      nom:((cli.nombre||'')+' '+(cli.apellidos||'')).trim()||'Sin nombre',
+      tel:cli.telefono||'',
+      iban:cli.iban_cargo||'',
+      iban_bono:cli.iban_bono||'',
+      tipo:r.tipo||'Luz',
+      contrato:String(r.id)
+    };
+    const pagos=[
+      {idx:1,fecha:r.fecha_pago_1,done:!!r.pago_1_hecho,t:TRAMO_DEFS[0]},
+      {idx:2,fecha:r.fecha_pago_2,done:!!r.pago_2_hecho,t:TRAMO_DEFS[1]},
+      {idx:3,fecha:r.fecha_pago_3,done:!!r.pago_3_hecho,t:TRAMO_DEFS[2]},
+      {idx:4,fecha:r.fecha_pago_4,done:!!r.pago_4_hecho,t:TRAMO_DEFS[3]}
+    ];
+    pagos.forEach(p=>{
+      if(String(p.fecha||'').slice(0,10)===y&&!p.done) rows.push({contratoId:r.id,c,t:p.t,idx:p.idx});
+    });
+  });
+  return rows;
+}
+async function getCobradoHoySupabase(){
+  if(!supabaseClient) return 0;
+  const y=ymdHoy();
+  const {data,error}=await supabaseClient
+    .from('contratos')
+    .select('fecha_pago_1,fecha_pago_2,fecha_pago_3,fecha_pago_4,pago_1_hecho,pago_2_hecho,pago_3_hecho,pago_4_hecho');
+  if(error){console.warn('No se pudo calcular cobrado hoy',error);return 0;}
+  let totalPagos=0;
+  (data||[]).forEach(r=>{
+    if(String(r.fecha_pago_1||'').slice(0,10)===y&&r.pago_1_hecho) totalPagos++;
+    if(String(r.fecha_pago_2||'').slice(0,10)===y&&r.pago_2_hecho) totalPagos++;
+    if(String(r.fecha_pago_3||'').slice(0,10)===y&&r.pago_3_hecho) totalPagos++;
+    if(String(r.fecha_pago_4||'').slice(0,10)===y&&r.pago_4_hecho) totalPagos++;
+  });
+  return totalPagos*12.5;
+}
+
 function getPagosVencidos(){
   const r=[];
   for(const c of [...clientes,...clientesSupabase]){
@@ -612,12 +667,11 @@ function updateKPIs(){
   const all=[...clientes,...clientesSupabase];
   const nf=all.filter(c=>c&&c.esSupabase?c.estado_supabase==='pendiente_contrato':(!c.baja&&!c.firma&&!c.activ)).length;
   const na=all.filter(c=>getEstado(c)==='activo').length;
-  const nh=getPagos(HOY).length;
   // Use innerHTML with a span and explicit font to prevent any emoji substitution
   const fmt=n=>'<span style="font-family:monospace;font-size:28px;font-weight:800;letter-spacing:-1px;color:inherit">'+n+'</span>';
   document.getElementById('k-f').innerHTML=fmt(nf);
   document.getElementById('k-a').innerHTML=fmt(na);
-  document.getElementById('k-h').innerHTML=fmt(nh);
+  getPagosHoySupabasePendientes().then(rows=>{document.getElementById('k-h').innerHTML=fmt(rows.length);});
 }
 
 function marcarPagado(cid,key){
@@ -675,16 +729,46 @@ function payCardHTML(c,t,vencido){
     </div>
   </div>`;
 }
+function payCardHTMLSupabasePago(p){
+  const c=p.c,t=p.t;
+  const ibanPago=(c.iban_bono||c.iban)||'Sin IBAN';
+  return`<div class="pay-card" id="pc-sb-${p.contratoId}-${p.idx}">
+    <div class="pct">
+      <div class="av av-md av-lime">${ini(c.nom)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="pname">${nomView(c.nom)} <span class="b ${esGasTipo(c.tipo)?'bb':'ba'}" style="margin-left:4px">${c.tipo||'Luz'}</span></div>
+        <div class="pinfo">
+          <span>${c.tel||'Sin teléfono'}</span>
+          <span class="pmono">${ibanPago}</span>
+          <span style="font-size:11px;color:var(--ink3)">Contrato: <span style="font-family:'DM Mono',monospace">${c.contrato}</span></span>
+        </div>
+      </div>
+    </div>
+    <div class="pcb">
+      <div><div class="pamount">12.50 €</div><div class="ptramo">Tramo ${t.label}</div></div>
+      <button class="btn-ok" onclick="marcarPagoSupabase(${idJs(p.contratoId)},${p.idx})">✓ Pago hecho</button>
+    </div>
+  </div>`;
+}
+async function marcarPagoSupabase(contratoId,idx){
+  if(!supabaseClient){alert('Supabase no disponible.');return;}
+  const field=`pago_${idx}_hecho`;
+  const {error}=await supabaseClient.from('contratos').update({[field]:true}).eq('id',contratoId);
+  if(error){alert('Error actualizando pago en Supabase: '+error.message);return;}
+  await renderHoy();
+  updateKPIs();
+}
 
-function renderHoy(){
-  const pv=getPagosVencidos(),ph=getPagos(HOY),pm=getPagos(MAN);
+async function renderHoy(){
+  const pv=[],pm=[];
+  const ph=await getPagosHoySupabasePendientes();
   document.getElementById('ban-venc').style.display=pv.length?'flex':'none';
   const cvCard=document.getElementById('card-venc');
   cvCard.style.display=pv.length?'block':'none';
   if(pv.length) document.getElementById('l-venc').innerHTML=pv.map(({c,t})=>payCardHTML(c,t,true)).join('');
   document.getElementById('ban-hoy').style.display=ph.length?'flex':'none';
   document.getElementById('l-hoy').innerHTML=ph.length
-    ?ph.map(({c,t})=>payCardHTML(c,t,false)).join('')
+    ?ph.map(p=>payCardHTMLSupabasePago(p)).join('')
     :`<div class="empty"><div class="empty-i">✅</div><div class="empty-t">Sin pagos hoy</div><div class="empty-s">No tienes comisiones pendientes para hoy.</div></div>`;
   document.getElementById('ban-man').style.display=pm.length?'flex':'none';
   document.getElementById('l-man').innerHTML=pm.length
