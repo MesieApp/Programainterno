@@ -886,46 +886,23 @@ body::before{
   <div class="top">
     <div class="brand">
       <div class="logo-wrap" aria-hidden="true">
-      <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+      <svg width="62" height="62" viewBox="0 0 62 62" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <defs>
-          <linearGradient id="lg-bg" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#2a2820"/>
-            <stop offset="55%" stop-color="#1a1912"/>
-            <stop offset="100%" stop-color="#12110c"/>
+          <linearGradient id="boltGrad" x1="0" y1="8" x2="0" y2="54" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#a3e635"/>
+            <stop offset="1" stop-color="#84cc16"/>
           </linearGradient>
-          <linearGradient id="lg-lime" x1="18%" y1="12%" x2="82%" y2="88%">
-            <stop offset="0%" stop-color="#e8f56e"/>
-            <stop offset="45%" stop-color="#c8e64a"/>
-            <stop offset="100%" stop-color="#7a9228"/>
-          </linearGradient>
-          <linearGradient id="lg-shield-fill" x1="50%" y1="0%" x2="50%" y2="100%">
-            <stop offset="0%" stop-color="#c8e64a" stop-opacity=".22"/>
-            <stop offset="100%" stop-color="#8fa832" stop-opacity=".06"/>
-          </linearGradient>
-          <linearGradient id="lg-rim" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="rgba(255,255,255,.14)"/>
-            <stop offset="100%" stop-color="rgba(255,255,255,.02)"/>
-          </linearGradient>
-          <radialGradient id="lg-core" cx="30%" cy="20%" r="70%">
-            <stop offset="0%" stop-color="rgba(200,230,74,.22)"/>
-            <stop offset="100%" stop-color="rgba(200,230,74,0)"/>
-          </radialGradient>
+          <filter id="boltShadow" x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#84cc16" flood-opacity="0.28"/>
+          </filter>
         </defs>
-        <rect width="60" height="60" rx="15" fill="url(#lg-bg)"/>
-        <rect width="60" height="60" rx="15" fill="none" stroke="url(#lg-lime)" stroke-width="1.15" opacity=".35"/>
-        <rect x="1" y="1" width="58" height="58" rx="14" fill="none" stroke="url(#lg-rim)" stroke-width="1"/>
-        <rect x="7.5" y="7.5" width="45" height="45" rx="11" fill="url(#lg-core)"/>
-        <!-- Shield -->
-        <path d="M30 9.5 L45 15.4 V29 C45 38.1 38.4 46 30 49 C21.6 46 15 38.1 15 29 V15.4 Z" fill="url(#lg-shield-fill)"/>
-        <path d="M30 9.5 L45 15.4 V29 C45 38.1 38.4 46 30 49 C21.6 46 15 38.1 15 29 V15.4 Z" fill="none" stroke="url(#lg-lime)" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/>
-        <!-- Lens -->
-        <circle cx="27.3" cy="27.1" r="8.1" fill="rgba(0,0,0,.18)"/>
-        <circle cx="27.3" cy="27.1" r="8.1" fill="none" stroke="rgba(200,230,74,.16)" stroke-width="2.8"/>
-        <circle cx="27.3" cy="27.1" r="8.1" fill="none" stroke="url(#lg-lime)" stroke-width="1.55"/>
-        <line x1="33.1" y1="33.1" x2="40.3" y2="40.1" stroke="url(#lg-lime)" stroke-width="3" stroke-linecap="round"/>
-        <line x1="33.1" y1="33.1" x2="40.3" y2="40.1" stroke="rgba(255,255,255,.2)" stroke-width="1" stroke-linecap="round" opacity=".6"/>
-        <!-- Tick -->
-        <path d="M23.6 27.6 L26.3 30.1 L30.8 24.4" fill="none" stroke="url(#lg-lime)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <rect x="0.5" y="0.5" width="61" height="61" rx="14" fill="#111111"/>
+
+        <g filter="url(#boltShadow)">
+          <!-- Bolt centered (~65% vertical height) -->
+          <path d="M34 11 L21 31 H31 L25 51 L41 31 H32 Z" fill="url(#boltGrad)"/>
+        </g>
       </svg>
       </div>
       <div>
