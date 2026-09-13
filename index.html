@@ -1043,7 +1043,7 @@ body::before{
       </div>
       <div style="display:flex;gap:8px;align-items:center">
         <button class="edit-btn" onclick="openEditFromDetail()">Editar</button>
-        <button class="edit-btn" style="color:var(--red);border-color:rgba(232,91,58,.3)" onclick="eliminarCliente()">Eliminar</button>
+        <button class="edit-btn" id="det-del-btn" style="color:var(--red);border-color:rgba(232,91,58,.3)" onclick="eliminarCliente()">Eliminar</button>
         <button class="mo-x" onclick="closeMo('mo-detail')">✕</button>
       </div>
     </div>
@@ -1113,6 +1113,8 @@ const ldH=()=>{try{return JSON.parse(localStorage.getItem('qntlch')||'[]')}catch
 const svH=d=>localStorage.setItem('qntlch',JSON.stringify(d));
 const ldSP=()=>{try{return JSON.parse(localStorage.getItem('qntlcsbp')||'{}')}catch(e){return{}}};
 const svSP=d=>localStorage.setItem('qntlcsbp',JSON.stringify(d));
+const ldOcultos=()=>{try{return JSON.parse(localStorage.getItem('qntlcocultos')||'[]')}catch(e){return[]}};
+const svOcultos=d=>localStorage.setItem('qntlcocultos',JSON.stringify(d));
 let clientesSupabase=[];
 let clientesPendientes=[];
 let supabaseClient=null;
@@ -1577,6 +1579,8 @@ let detailId=null;
 function openDetail(id){
   const c=getClienteById(id); if(!c) return;
   detailId=id;
+  const delBtn=document.getElementById('det-del-btn');
+  if(delBtn) delBtn.textContent=c.esSupabase?'Quitar del CRM':'Eliminar';
   document.getElementById('det-av').textContent=ini(c.nom);
   document.getElementById('det-name').textContent=nomView(c.nom);
   document.getElementById('det-badge').innerHTML=`<span class="b ${esGasTipo(c.tipo)?'bb':'ba'}">${c.tipo||'Luz'}</span>`;
@@ -1688,7 +1692,18 @@ function quickActivar(){
 
 function eliminarCliente(){
   const c=getClienteById(detailId); if(!c) return;
-  if(c.esSupabase){alert('Este cliente viene de Supabase. Eliminarlo no está habilitado aquí.');return;}
+  if(c.esSupabase){
+    if(!confirm(`¿Quitar a ${nomView(c.nom)} de este CRM?\n\nEsto solo lo oculta de este panel. El contrato seguirá existiendo tal cual en Gana Energía / Supabase, no se borra ni se modifica nada allí.`)) return;
+    const ocultos=ldOcultos();
+    const sid=String(c.supabase_id);
+    if(!ocultos.includes(sid)){ocultos.push(sid);svOcultos(ocultos);}
+    clientesSupabase=clientesSupabase.filter(x=>String(x.supabase_id)!==sid);
+    clientesPendientes=clientesPendientes.filter(x=>String(x.supabase_id)!==sid);
+    closeMo('mo-detail');
+    renderClientes();
+    updateKPIs();
+    return;
+  }
   if(!confirm(`¿Eliminar a ${c.nom} definitivamente?\n\nEsto borrará al cliente y todos sus datos. Esta acción no se puede deshacer.`)) return;
   clientes=clientes.filter(x=>x.id!==detailId);
   svC(clientes);
@@ -2340,6 +2355,8 @@ async function sincronizarConSupabase(){
         t1:p.t1||'',t2:p.t2||'',t3:p.t3||'',t4:p.t4||''
       };
     });
+    const ocultos=ldOcultos();
+    clientesSupabase=clientesSupabase.filter(c=>!ocultos.includes(String(c.supabase_id)));
     clientesPendientes=clientesSupabase.filter(c=>c.estado_supabase==='pendiente_contrato');
     if(typeof renderClientes==='function') renderClientes();
     if(typeof updateKPIs==='function') updateKPIs();
